@@ -6,6 +6,7 @@ import Box from '@mui/material/Box'
 import Copyright from '../src/Copyright'
 import Link from '../src/Link'
 
+
 const Home: NextPage = () => {
 	return (
 		<Container maxWidth='lg'>
