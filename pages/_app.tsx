@@ -6,6 +6,7 @@ import { AppProps } from 'next/app'
 import Head from 'next/head'
 import { NavBar } from '../src/components/NavBar'
 import createEmotionCache from '../src/createEmotionCache'
+import Copyright from '../src/Copyright'
 import theme from '../src/theme'
 import { SessionProvider } from "next-auth/react"
 
@@ -29,6 +30,7 @@ export default function MyApp(props: MyAppProps) {
 					{/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
 					<CssBaseline />
 					<NavBar />
+					<Copyright/>
 					<Component {...pageProps} />
 				</ThemeProvider>
 			</CacheProvider>

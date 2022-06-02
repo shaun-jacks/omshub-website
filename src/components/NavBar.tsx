@@ -21,22 +21,21 @@ export const NavBar = ({ ...props }: NavBarProps) => {
 			{...props}
 		>
 			<Toolbar sx={{ flexWrap: 'wrap' }}>
-				<Typography variant='h6' color='inherit' noWrap sx={{ flexGrow: 1 }}>
-					OMSHub
-				</Typography>
+				<Link
+					variant='button'
+					color='text.primary'
+					href='/'
+					sx={{ flexGrow: 1, my: 1, mx: 1.5, textDecoration: 'none' }}
+				>
+					<Typography variant='h6' color='inherit' noWrap sx={{ flexGrow: 1 }}>
+						OMSHub
+					</Typography>
+				</Link>
 				<nav>
 					<Link
 						variant='button'
 						color='text.primary'
-						href='/'
-						sx={{ my: 1, mx: 1.5 }}
-					>
-						Home
-					</Link>
-					<Link
-						variant='button'
-						color='text.primary'
-						href='about'
+						href='/about'
 						sx={{ my: 1, mx: 1.5 }}
 					>
 						About

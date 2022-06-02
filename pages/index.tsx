@@ -1,13 +1,72 @@
-import * as React from 'react'
+import React, { useState, useEffect } from 'react'
 import type { NextPage } from 'next'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
-import Copyright from '../src/Copyright'
+import Grid from '@mui/material/Grid'
 import Link from '../src/Link'
+import {
+	DataGrid,
+	GridColDef,
+	GridToolbar,
+	GridRenderCellParams,
+} from '@mui/x-data-grid'
+
+interface ClassData {
+	number: string
+	aliases: string
+	department: string
+	deprecated: boolean
+	foundational: string
+	name: string
+	link: string
+	course_id: string
+}
 
 
 const Home: NextPage = () => {
+	const columns: GridColDef[] = [
+		{
+			field: 'name',
+			headerName: 'Course Name',
+			flex: 1,
+			renderCell: (params: GridRenderCellParams) => (
+				<Link
+					href={{
+						pathname: `/class/${params.row.course_id}`,
+						query: { classid: params.row.course_id, title: params.row.name },
+					}}
+				>
+					{params.row.name}
+				</Link>
+			),
+		},
+		{ field: 'course_id', headerName: 'Course ID', flex: 1 },
+		{ field: 'aliases', headerName: 'Aliases', flex: 1, hide: true },
+	]
+	const [loading, setLoading] = useState<boolean>()
+	const [classes, setClasses] = useState<Array<ClassData>>([])
+
+	useEffect(() => {
+		setLoading(true)
+		// fetch('https://omshub-readonly.gigalixirapp.com/classes')
+		fetch('https://omshub-api.gigalixirapp.com/api/classes')
+			.then((res) => res.json())
+			.then((classes) => {
+				//Clean data
+				classes = classes.map((data: object, index: number) => ({
+					...data,
+					id: index,
+				}))
+				setClasses(classes)
+				setLoading(false)
+			})
+			.catch((err) => {
+				setLoading(false)
+				console.log(err)
+			})
+	}, [])
+
 	return (
 		<Container maxWidth='lg'>
 			<Box
@@ -19,28 +78,42 @@ const Home: NextPage = () => {
 					alignItems: 'center',
 				}}
 			>
-				<Typography variant='h4' component='h1' sx={{ mb: 10 }} gutterBottom>
-					OMSCS Course List
+				<Typography
+					variant='h4'
+					component='h1'
+					sx={{ mt: 5, mb: 10 }}
+					gutterBottom
+				>
+					OMSCS Courses
 				</Typography>
-				Hello! OMSHub is under construction. While the formal OMSHub website is
-				being developed, we wanted to offer the community a means of submitting
-				reviews in the interim period with a Google Form. All reviews posted to
-				this form will ultimately be loaded into the final website. In the mean
-				time, the results can be viewed on a spreadsheet.
-				<Link
-					href='https://docs.google.com/forms/d/e/1FAIpQLSc1xXBa3nnPECvoAKLMC4X3iXbZOghOiIQv6p8xAwR5gysBSA/viewform'
-					color='secondary'
-				>
-					Temporary Submission Form
-				</Link>
-				<Link
-					href='https://docs.google.com/spreadsheets/d/1ezCaFiye6dxVcdOCClndmz0JBLwMDrNtayL1WaTObj0/edit#gid=0'
-					color='secondary'
-				>
-					Temporary Spreadsheet With Reviews
-				</Link>
+
+				<>
+					<Grid container spacing={3}>
+						<DataGrid
+							autoHeight
+							disableColumnSelector
+							rows={classes}
+							columns={columns}
+							loading={loading}
+							components={{ Toolbar: GridToolbar }}
+							columnVisibilityModel={{
+								aliases: false,
+							}}
+							componentsProps={{
+								toolbar: {
+									showQuickFilter: true,
+									quickFilterProps: { debounceMs: 500 },
+								},
+							}}
+							initialState={{
+								pagination: {
+									pageSize: 150,
+								},
+							}}
+						/>
+					</Grid>
+				</>
 			</Box>
-			<Copyright />
 		</Container>
 	)
 }
